@@ -5,6 +5,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+"allow terminal to open with .bash_profile
+set shell=/bin/bash\ -l
+
+tnoremap <Esc> <C-\><C-n>
 nnoremap <SPACE> <Nop>
 " possible remap if caps lock cannot be remapped
 " :imap ii <Esc>
@@ -62,10 +66,7 @@ Plug 'jiangmiao/auto-pairs'
 
 "color scheme
 Plug 'gruvbox-community/gruvbox'
-
-"grammar
-Plug 'rhysd/vim-grammarous'
-
+ 
 "awesome snippets
 Plug 'SirVer/Ultisnips'
 
@@ -82,7 +83,6 @@ Plug 'leafgarland/typescript-vim'
 "------------------------ THEME ------------------------
 " most importantly you need a good color scheme to write good code :D
 Plug 'dikiaap/minimalist'
-call plug#end()
 " == VIMPLUG END ================================
 " == AUTOCMD ================================ 
 " by default .ts file are not identified as typescript and .tsx files are not
@@ -115,6 +115,8 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 xmap <leader>a  <Plug>(coc-codeaction-selected)
 
 nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+nmap <silent> gs :call CocAction('jumpDefinition', 'vsplit')<CR>
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)

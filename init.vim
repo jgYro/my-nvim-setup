@@ -6,7 +6,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 "allow terminal to open with .bash_profile
-set shell=/bin/bash\ -l
 
 tnoremap <Esc> <C-\><C-n>
 nnoremap <SPACE> <Nop>
@@ -55,6 +54,16 @@ nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+"status bar
+Plug 'vim-airline/vim-airline'
+
+"allows git commands
+Plug 'tpope/vim-fugitive'
+"shows git changes
+Plug 'airblade/vim-gitgutter'
+"go to any word like vimimum f command
+Plug 'easymotion/vim-easymotion'
 
 "python stuff
 Plug 'Vimjas/vim-python-pep8-indent'
@@ -145,3 +154,4 @@ endfunction
 
 nmap <leader>rn <Plug>(coc-rename)
 call plug#end()
+"set shell=/bin/bash\ --login

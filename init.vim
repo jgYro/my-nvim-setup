@@ -1,3 +1,5 @@
+"shared init.vim for both MacOSX and Windows
+
 " make sure package manager loads initially if files are not installed
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs

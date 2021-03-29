@@ -10,7 +10,6 @@ endif
 "if not windows
 tnoremap <Esc> <C-\><C-n>
 
-"allow terminal to open with .bash_profile
 nnoremap <SPACE> <Nop>
 " possible remap if caps lock cannot be remapped for windows
 " :imap ii <Esc>

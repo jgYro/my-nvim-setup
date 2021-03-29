@@ -107,8 +107,6 @@ let g:UltiSnipsJumpBackwardTrigger = '<C-z>'
 
 nnoremap <silent> <Leader>f :Rg<CR>
 
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
 " codeaction 
 "Example: <leader>aap for current paragraph, <leader>aw for the current word
 " Wrap with widget, center, etc

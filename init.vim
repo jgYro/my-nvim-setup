@@ -5,7 +5,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-
+"if not windows
 tnoremap <Esc> <C-\><C-n>
 
 "allow terminal to open with .bash_profile
@@ -156,4 +156,4 @@ endfunction
 
 nmap <leader>rn <Plug>(coc-rename)
 call plug#end()
-"set shell=/bin/bash\ --login has bug with airline :(
+"set shell=/bin/bash\ --login has bug with airline :( otherwise loads .bash_profile

@@ -1,5 +1,3 @@
-"shared init.vim for both MacOSX and Windows
-
 " make sure package manager loads initially if files are not installed
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -7,11 +5,11 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-"if not windows
-tnoremap <Esc> <C-\><C-n>
+"allow terminal to open with .bash_profile
 
+tnoremap <Esc> <C-\><C-n>
 nnoremap <SPACE> <Nop>
-" possible remap if caps lock cannot be remapped for windows
+" possible remap if caps lock cannot be remapped
 " :imap ii <Esc>
 let mapleader=" "
 set encoding=utf-8
@@ -121,6 +119,10 @@ let g:UltiSnipsExpandTrigger = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger = '<C-x>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-z>'
 
+nnoremap <silent> <Leader>f :Rg<CR>
+
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
 " codeaction 
 "Example: <leader>aap for current paragraph, <leader>aw for the current word
 " Wrap with widget, center, etc
@@ -133,6 +135,10 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <C-k>  <Plug>(coc-diagnostic-prev)
+nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
+nmap <silent> <C-a> :CocDiagnostics<CR>
+
 " use <tab> for trigger completion and navigate to the next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -157,4 +163,4 @@ endfunction
 
 nmap <leader>rn <Plug>(coc-rename)
 call plug#end()
-"set shell=/bin/bash\ --login has bug with airline :( otherwise loads .bash_profile
+"set shell=/bin/bash\ --login

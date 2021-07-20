@@ -1,16 +1,12 @@
-" make sure package manager loads initially if files are not installed
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-"allow terminal to open with .bash_profile
-
-tnoremap <Esc> <C-\><C-n>
 nnoremap <SPACE> <Nop>
 " possible remap if caps lock cannot be remapped
-" :imap ii <Esc>
+
+let &shell = has('win32') ? 'powershell' : 'pwsh'
+set shellquote= shellpipe=\| shellxquote=
+set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
+set shellredir=\|\ Out-File\ -Encoding\ UTF8
+tnoremap <Esc> <C-\><C-n>
+nnoremap <A-v> <C-v>
 let mapleader=" "
 set encoding=utf-8
 set cmdheight=2
@@ -31,6 +27,22 @@ set noshowcmd
 set noruler
 set nowrap
 
+"kite stuff
+"let g:kite_tab_complete=1
+
+"function! s:check_back_space() abort
+	"let col = col('.') - 1
+	"return !col || getline('.')[col - 1] =~ '\s'
+"endfunction
+
+"inoremap <silent><expr> <Tab>
+	"\ pumvisible() ? "\<C-n>" :
+	"\ <SID>check_back_space() ? "\<Tab>" :
+	"\ kite#completion#autocomplete()
+
+"autocmd CompleteDone * if !pumvisible() | pclose | endif
+"set belloff+=ctrlg  " if vim beeps during completion
+
 "split navigations
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
@@ -38,6 +50,51 @@ nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
 call plug#begin()
+" js/ts intellisense
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+
+nnoremap <silent> K :call CocAction('doHover')<CR>
+
+function! ShowDocIfNoDiagnostic(timer_id)
+  if (coc#float#has_float() == 0)
+    silent call CocActionAsync('doHover')
+  endif
+endfunction
+
+function! s:show_hover_doc()
+  call timer_start(500, 'ShowDocIfNoDiagnostic')
+endfunction
+
+autocmd CursorHoldI *.js,*.jsx,*.tsx :call <SID>show_hover_doc()
+autocmd CursorHold *.js,*.jsx,*.tsx :call <SID>show_hover_doc()
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gv :vsp<CR><Plug>(coc-definition)<C-W>L
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+nnoremap <silent> <leader>e :<C-u>CocList diagnostics<cr>
+
+nmap <leader>do <Plug>(coc-codeaction)
+
+nmap <leader>rn <Plug>(coc-rename)
+
+"typescript/react stuff" coc extensions
+let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier']
+"------------------------ VIM TSX ------------------------
+" by default, if you open tsx file, neovim does not show syntax colors
+" vim-tsx will do all the coloring for jsx in the .tsx file
+Plug 'ianks/vim-tsx'
+"------------------------ VIM TSX ------------------------
+" by default, if you open tsx file, neovim does not show syntax colors
+" typescript-vim will do all the coloring for typescript keywords
+Plug 'leafgarland/typescript-vim'
+
+"powershell stuff
+Plug 'pprovost/vim-ps1'
+
 "file manager i never use
 Plug 'preservim/NERDTree'
 nnoremap <leader>n :NERDTreeFocus<CR>
@@ -55,62 +112,34 @@ nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
+
+
 "status bar
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'powerline/fonts'
-" air-line
-let g:airline_powerline_fonts = 1
-let g:airline_theme='violet'
 
 "allows git commands
 Plug 'tpope/vim-fugitive'
+
 "shows git changes
 Plug 'airblade/vim-gitgutter'
-"go to any word like vimimum f command
-Plug 'easymotion/vim-easymotion'
 
-"python stuff
-Plug 'Vimjas/vim-python-pep8-indent'
-Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-python'
-Plug 'jeetsukumaran/vim-pythonsense'
-Plug 'davidhalter/jedi'
+"autopair
 Plug 'jiangmiao/auto-pairs'
 
 "color scheme
 Plug 'gruvbox-community/gruvbox'
- 
+
 "awesome snippets
 Plug 'SirVer/Ultisnips'
 
-"typescript/react stuff" coc extensions
-let g:coc_global_extensions = ['coc-tslint-plugin', 'coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-yank', 'coc-prettier']
-"------------------------ VIM TSX ------------------------
-" by default, if you open tsx file, neovim does not show syntax colors
-" vim-tsx will do all the coloring for jsx in the .tsx file
-Plug 'ianks/vim-tsx'
-"------------------------ VIM TSX ------------------------
-" by default, if you open tsx file, neovim does not show syntax colors
-" typescript-vim will do all the coloring for typescript keywords
-Plug 'leafgarland/typescript-vim'
-"------------------------ THEME ------------------------
-" most importantly you need a good color scheme to write good code :D
-Plug 'dikiaap/minimalist'
-" == VIMPLUG END ================================
-" == AUTOCMD ================================ 
-" by default .ts file are not identified as typescript and .tsx files are not
-" identified as typescript react file, so add following
-au BufNewFile,BufRead *.ts setlocal filetype=typescript
-au BufNewFile,BufRead *.tsx setlocal filetype=typescript.tsx
-" == AUTOCMD END ================================
-"dart stff
-Plug 'natebosch/dartlang-snippets'
-Plug 'dart-lang/dart-vim-plugin'
-let dart_format_on_save = 1
-let dart_style_guide = 2
+"sit on the tree
+Plug 'nvim-treesitter/nvim-treesitter'
 
-let g:coc_force_debug = 1
+"ripgrep
+Plug 'jremmen/vim-ripgrep'
+
+call plug#end()
 
 autocmd vimenter * ++nested colorscheme gruvbox
 
@@ -119,48 +148,8 @@ let g:UltiSnipsExpandTrigger = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger = '<C-x>'
 let g:UltiSnipsJumpBackwardTrigger = '<C-z>'
 
+call plug#end()
+
 nnoremap <silent> <Leader>f :Rg<CR>
 
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
-" codeaction 
-"Example: <leader>aap for current paragraph, <leader>aw for the current word
-" Wrap with widget, center, etc
-xmap <leader>a  <Plug>(coc-codeaction-selected)
-
-nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-nmap <silent> gs :call CocAction('jumpDefinition', 'vsplit')<CR>
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> <C-k>  <Plug>(coc-diagnostic-prev)
-nmap <silent> <C-j> <Plug>(coc-diagnostic-next)
-nmap <silent> <C-a> :CocDiagnostics<CR>
-
-" use <tab> for trigger completion and navigate to the next complete item
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
-endfunction
-
-inoremap <silent><expr> <Tab>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<Tab>" :
-      \ coc#refresh()
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-nmap <leader>rn <Plug>(coc-rename)
-call plug#end()
-"set shell=/bin/bash\ --login
